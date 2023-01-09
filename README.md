@@ -75,9 +75,9 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 ## Automation and scale
 
-* This terraform module set is intended to be used at scale. Instead of deploying it locally, the Terraform modules can be used in a multi-account strategy environment, such as in an AWS Control Tower with Account Factory for Terraform environment. In that case, a backend state S3 bucket should be used for managing Terraform state files, instead of managing the configuration state locally.
+* This terraform module set is intended to be used at scale. Instead of deploying it locally, the Terraform modules can be used in a multi-account strategy environment, such as in an [AWS Control Tower](https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html) with [Account Factory for Terraform](https://aws.amazon.com/blogs/aws/new-aws-control-tower-account-factory-for-terraform/) environment. In that case, a [backend state S3 bucket](https://developer.hashicorp.com/terraform/language/settings/backends/s3) should be used for managing Terraform state files, instead of managing the configuration state locally.
 
-* To deploy for scaled use, deploy the solution to one central account, such as “Shared Services/Common Services” from a Control Tower or Landing Zone account model and grant consumer accounts permission to access to the ECR Repo/KMS Key, see this blog post explaining the setup. For example, in an Account Vending Machine or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
+* To deploy for scaled use, deploy the solution to one central account, such as “Shared Services/Common Services” from a Control Tower or Landing Zone account model and grant consumer accounts permission to access to the ECR Repo/KMS Key, see [this blog post](https://aws.amazon.com/premiumsupport/knowledge-center/secondary-account-access-ecr/) explaining the setup. For example, in an [Account Vending Machine](https://www.hashicorp.com/resources/terraform-landing-zones-for-self-service-multi-aws-at-eventbrite) or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
 
 * This container image pipeline can be simply modified once deployed, using EC2 Image Builder features, such as the “Component” feature, which will allow easy packaging of more components into the Docker build.
 
@@ -153,7 +153,7 @@ Error: configuring Terraform AWS Provider: error validating provider credentials
 
 This error is due to the expiration of the security token for the credentials used in your local machine’s configuration.
 
-See “Set and View Configuration Settings” from the AWS Command Line Interface Documentation to resolve.
+See “[Set and View Configuration Settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods)” from the AWS Command Line Interface Documentation to resolve.
 
 ## Author
 

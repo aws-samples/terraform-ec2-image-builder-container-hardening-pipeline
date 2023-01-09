@@ -15,14 +15,14 @@ The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonC
 
 ## Target technology stack  
 
-* [S3 Bucket](https://aws.amazon.com/s3/) for the Pipeline Component Files
-* ECR
-* 1 VPC, 1 Public and 1 Private subnet, Route tables, a NAT Gateway, and an Internet Gateway
+* Two [S3 Buckets](https://aws.amazon.com/s3/), 1 for the Pipeline Component Files and 1 for Server Access and VPC Flow logs
+* An [ECR Repository](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html)
+* A VPC, a Public and Private subnet, Route tables, a NAT Gateway, and an Internet Gateway
 * An EC2 Image Builder Pipeline, Recipe, and Components
-* 1 Container Image
-* 1 [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
-* A Cloudwatch Event Rule which triggers the start of the pipeline based on an Inspector2 Finding of “High”
-* This pattern creates 30 AWS Resources total.
+* A Container Image
+* A [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
+* A Cloudwatch Event Rule which triggers the start of the pipeline based on an Inspector Finding of “High” or "Critical"
+* This pattern creates 34 AWS Resources total
 
 ## Limitations 
 
@@ -83,7 +83,7 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 * The KMS Key used to encrypt the container image should be shared across accounts which the container image is intended to be used in
 
-* Support for other images can be added by simply duplicating this entire Terraform module, and modifying the recipes.tf attributes, parent_image = "amazonlinux:latest" to be another parent image type, and modifying the repository_name to point to an existing ECR repository. This will create another pipeline which deploys a different parent image type, but to your existing ECR repostiory.
+* Support for other images can be added by simply duplicating this entire Terraform module, and modifying the `recipes.tf` attributes, `parent_image = "amazonlinux:latest"` to be another parent image type, and modifying the repository_name to point to an existing ECR repository. This will create another pipeline which deploys a different parent image type, but to your existing ECR repostiory.
 
 ## Deployment steps
 
@@ -140,12 +140,12 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
-Apply complete! Resources: 30 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 34 added, 0 changed, 0 destroyed.
 ```
 
 ## Troubleshooting
 
-*When running Terraform apply or destroy commands from your local machine, you may encounter an error similar to the following:*
+When running Terraform apply or destroy commands from your local machine, you may encounter an error similar to the following:
 
 ``` json
 Error: configuring Terraform AWS Provider: error validating provider credentials: error calling sts:GetCallerIdentity: operation error STS: GetCallerIdentity, https response error StatusCode: 403, RequestID: 123456a9-fbc1-40ed-b8d8-513d0133ba7f, api error InvalidClientTokenId: The security token included in the request is invalid.

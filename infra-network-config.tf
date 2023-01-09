@@ -9,6 +9,18 @@ resource "aws_vpc" "hardening_pipeline" {
     Name = "${var.vpc_name}"
   }
 }
+
+resource "aws_flow_log" "hardening_pipeline_flow" {
+  depends_on = [
+    aws_s3_bucket.s3_pipeline_logging_bucket_logs
+  ]
+  log_destination = aws_s3_bucket.s3_pipeline_logging_bucket_logs.arn
+  log_destination_type = "s3"
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.hardening_pipeline.id
+}
+
+# Map public IP on launch because we are creating an internet gateway
 resource "aws_subnet" "hardening_pipeline_public" {
   depends_on = [
     aws_vpc.hardening_pipeline
@@ -22,6 +34,7 @@ resource "aws_subnet" "hardening_pipeline_public" {
     Name = "${var.vpc_name}-public"
   }
 }
+
 resource "aws_subnet" "hardening_pipeline_private" {
   depends_on = [
     aws_vpc.hardening_pipeline,
@@ -36,6 +49,11 @@ resource "aws_subnet" "hardening_pipeline_private" {
     Name = "${var.vpc_name}-private"
   }
 }
+
+resource "aws_default_security_group" "hardening_pipeline_vpc_default" {
+  vpc_id = aws_vpc.hardening_pipeline.id
+}
+
 resource "aws_internet_gateway" "hardening_pipeline_igw" {
   depends_on = [
     aws_vpc.hardening_pipeline,

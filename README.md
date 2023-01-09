@@ -2,7 +2,7 @@
 
 Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the “[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)” section in Linux STIG Components for details. This is commonly referred to as a “Golden” container image.
 
-The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html) which triggers the start of the Container Image pipeline based on an [Inspector Finding] of “High” or “Critical” so that insecure images are replaced, if Inspector and Amazon ECR enhanced scanning are enabled, however it is not necessary to deploy and utilize the solution.
+The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html) which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of “High” or “Critical” so that insecure images are replaced, if Inspector and Amazon ECR enhanced scanning are enabled, however it is not necessary to deploy and utilize the solution.
 
 ## Prerequisites
 
@@ -59,16 +59,16 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 ## Module details
 
-1. hardening-pipeline.tfvars contains the Terraform variables to be used at apply time
-2. pipeline.tf creates and manages an EC2 Image Builder pipeline in Terraform
-3. image.tf contains the definitions for the Base Image OS, this is where you can modify for a different base image pipeline.
-4. infr-config.tf and dist-config.tf  contain the resources for the minimum AWS infrastructure needed to spin up and distribute the image.
-5. components.tf contains an S3 upload resource to upload the contents of the /files directory, and where you can modularly add custom component YAML files as well.
-6. recipes.tf is where you can specific different mixtures of components to create a different container recipe.
-7. trigger-build.tf is an inspector2 finding based pipeline trigger.
-8. roles.tf contains the IAM policy definitions for the EC2 Instance Profile and Pipeline Deployment Role
-9. infra-network-config.tf contains the minimum VPC infrastructure to deploy the container image into
-10. /files contains the .yml files which are used to define the components used in components.tf
+1. `hardening-pipeline.tfvars` contains the Terraform variables to be used at apply time
+2. `pipeline.tf` creates and manages an EC2 Image Builder pipeline in Terraform
+3. `image.tf` contains the definitions for the Base Image OS, this is where you can modify for a different base image pipeline.
+4. `infr-config.tf` and `dist-config.tf`  contain the resources for the minimum AWS infrastructure needed to spin up and distribute the image.
+5. `components.tf` contains an S3 upload resource to upload the contents of the /files directory, and where you can modularly add custom component YAML files as well.
+6. `recipes.tf` is where you can specific different mixtures of components to create a different container recipe.
+7. `trigger-build.tf` is an inspector2 finding based pipeline trigger.
+8. `roles.tf` contains the IAM policy definitions for the EC2 Instance Profile and Pipeline Deployment Role
+9. `infra-network-config.tf` contains the minimum VPC infrastructure to deploy the container image into
+10. `/files` is intended to contain the `.yml` files which are used to define any custom components used in components.tf
 
 ## Target architecture
 ![Deployed Resources Architecture](container-harden.png)

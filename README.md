@@ -1,30 +1,32 @@
 # Terraform EC2 Image Builder Container Hardening Pipeline summary
 
-Creates and manages EC2 Image Builder Container resources. Specifically this pipeline builds an Amazon Linux 2 Baseline Container using Docker with RHEL 7 STIG Version 3 Release 7 hardening applied, along with a few other configurations. See recipes.tf for more details.
+Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the “[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)” section in Linux STIG Components for details. This is commonly referred to as a “Golden” container image.
+
+The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html) which triggers the start of the Container Image pipeline based on an [Inspector Finding] of “High” or “Critical” so that insecure images are replaced, if Inspector and Amazon ECR enhanced scanning are enabled, however it is not necessary to deploy and utilize the solution.
 
 ## Prerequisites
 
-* Terraform v.15+. Download and setup Terraform. Refer to the official Terraform instructions to get started.
-* AWS CLI installed for setting your AWS Credentials for Local Deployment.
-* An AWS Account to deploy the infrastructure within.
-* Git (if provisioning from a local machine).
-* A role within the AWS account that you are able create AWS resources with
-* Ensure the .tfvars file has all variables defined or define all variables at “Terraform Apply” time
+* Terraform v.15+. [Download](https://www.terraform.io/downloads.html) and setup Terraform. Refer to the official Terraform [instructions](https://learn.hashicorp.com/collections/terraform/aws-get-started) to get started.
+* [AWS CLI installed](https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-install.html) for setting your AWS Credentials for Local Deployment.
+* [An AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) to deploy the infrastructure within.
+* [Git](https://git-scm.com/) (if provisioning from a local machine).
+* A [role](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjllPaT-LD8AhXsFFkFHd4PBEsQFnoECA8QAQ&url=https%3A%2F%2Fdocs.aws.amazon.com%2FIAM%2Flatest%2FUserGuide%2Fid_roles.html&usg=AOvVaw2x3qPB3Ld00_O0zMSxCNNi) within the AWS account that you are able create AWS resources with
+* Ensure the [.tfvars](https://developer.hashicorp.com/terraform/tutorials/configuration-language/variables) file has all variables defined or define all variables at “Terraform Apply” time
 
 ## Target technology stack  
 
-* S3 Bucket for the Pipeline Component Files
+* [S3 Bucket](https://aws.amazon.com/s3/) for the Pipeline Component Files
 * ECR
 * 1 VPC, 1 Public and 1 Private subnet, Route tables, a NAT Gateway, and an Internet Gateway
 * An EC2 Image Builder Pipeline, Recipe, and Components
 * 1 Container Image
-* 1 KMS Key for Image Encryption
+* 1 [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
 * A Cloudwatch Event Rule which triggers the start of the pipeline based on an Inspector2 Finding of “High”
-* This pattern creates 29 AWS Resources total.
+* This pattern creates 30 AWS Resources total.
 
 ## Limitations 
 
-VPC Endpoints cannot be used, and therefore this solution creates VPC Infrastructure that includes a NAT Gateway and an Internet Gateway for internet connectivity from its private subnet. This is due to the bootstrap process by AWSTOE, which installs AWS CLI v2 from the internet.
+[VPC Endpoints](https://docs.aws.amazon.com/whitepapers/latest/aws-privatelink/what-are-vpc-endpoints.html) cannot be used, and therefore this solution creates VPC Infrastructure that includes a [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) and an Internet Gateway for internet connectivity from its private subnet. This is due to the bootstrap process by [AWSTOE](https://docs.aws.amazon.com/imagebuilder/latest/userguide/how-image-builder-works.html#ibhow-component-management), which installs AWS CLI v2 from the internet.
 
 ## Operating systems
 
@@ -138,7 +140,7 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
-Apply complete! Resources: 29 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 30 added, 0 changed, 0 destroyed.
 ```
 
 ## Troubleshooting

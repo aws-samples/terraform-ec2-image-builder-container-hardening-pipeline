@@ -155,4 +155,4 @@ See “Set and View Configuration Settings” from the AWS Command Line Interfac
 
 ## Author
 
-* Mike Saintcross [msaintcr@amazon.com](msaintcr@amazon.com)
+* Mike Saintcross [msaintcr@amazon.com](mailto:msaintcr@amazon.com)

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "trigger_role" {
-  name = "${var.ec2_iam_role_name}-event-bridge-role"
+  name               = "${var.ec2_iam_role_name}-event-bridge-role"
   assume_role_policy = <<DOC
 {
   "Version": "2012-10-17",

@@ -34,31 +34,31 @@ variable "vpc_name" {
 }
 
 variable "ec2_iam_role_name" {
-  type = string
+  type        = string
   description = "Enter the name for the role that will be used as the EC2 Instance Profile."
 }
 
 variable "hardening_pipeline_role_name" {
-  type = string
+  type        = string
   description = "Enter the name for the role that will be used to deploy the hardening Pipeline."
 }
 
 variable "ecr_name" {
-  type = string
+  type        = string
   description = "Enter the name for Elastic Container Registry to store the container images."
 }
 
 variable "aws_s3_ami_resources_bucket" {
-  type = string
+  type        = string
   description = "Enter the name for an S3 Bucket that will host all files necessary to build the pipeline and container images."
 }
 
 variable "ebs_root_vol_size" {
-  type = number
+  type        = number
   description = "Enter the size (in gigabytes) of the EBS Root Volume."
 }
 
 variable "kms_key_alias" {
-  type = string
+  type        = string
   description = "Enter the KMS Key name to be used by the image builder infrastructure configuration."
 }

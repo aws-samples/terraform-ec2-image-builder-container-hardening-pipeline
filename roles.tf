@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ec2_iam_role" {
-  name               = "${var.ec2_iam_role_name}"
+  name               = var.ec2_iam_role_name
   assume_role_policy = file("files/assumption-policy.json")
   inline_policy {
     name = "hardening_instance_inline_policy"
@@ -128,32 +128,32 @@ resource "aws_iam_role" "ec2_iam_role" {
           ]
         },
         {
-            "Effect": "Allow",
-            "Action": "inspector2:*",
-            "Resource": "*"
+          "Effect" : "Allow",
+          "Action" : "inspector2:*",
+          "Resource" : "*"
         },
         {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:AWSServiceName": "inspector2.amazonaws.com"
-                }
+          "Effect" : "Allow",
+          "Action" : "iam:CreateServiceLinkedRole",
+          "Resource" : "*",
+          "Condition" : {
+            "StringEquals" : {
+              "iam:AWSServiceName" : "inspector2.amazonaws.com"
             }
+          }
         },
         {
-            "Effect": "Allow",
-            "Action": [
-                "organizations:EnableAWSServiceAccess",
-                "organizations:RegisterDelegatedAdministrator",
-                "organizations:ListDelegatedAdministrators",
-                "organizations:ListAWSServiceAccessForOrganization",
-                "organizations:DescribeOrganizationalUnit",
-                "organizations:DescribeAccount",
-                "organizations:DescribeOrganization"
-            ],
-            "Resource": "*"
+          "Effect" : "Allow",
+          "Action" : [
+            "organizations:EnableAWSServiceAccess",
+            "organizations:RegisterDelegatedAdministrator",
+            "organizations:ListDelegatedAdministrators",
+            "organizations:ListAWSServiceAccessForOrganization",
+            "organizations:DescribeOrganizationalUnit",
+            "organizations:DescribeAccount",
+            "organizations:DescribeOrganization"
+          ],
+          "Resource" : "*"
         }
       ]
     })
@@ -162,80 +162,80 @@ resource "aws_iam_role" "ec2_iam_role" {
 
 # Create the EC2 Instance Profile to use for the image
 resource "aws_iam_instance_profile" "image_builder_role" {
-  name = "${var.ec2_iam_role_name}"
+  name = var.ec2_iam_role_name
   role = aws_iam_role.ec2_iam_role.name
 }
 
 resource "aws_iam_role" "hardening_pipeline_role" {
-  name               = "${var.hardening_pipeline_role_name}"
+  name               = var.hardening_pipeline_role_name
   assume_role_policy = file("files/assumption-policy.json")
   inline_policy {
     name = "hardening_pipeline_inline_policy"
     policy = jsonencode({
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": [
-                    "events:DescribeRule",
-                    "kms:Decrypt",
-                    "kms:TagResource",
-                    "kms:Encrypt",
-                    "ec2:CreateSecurityGroup",
-                    "ec2:CreateTags",
-                    "ec2:RevokeSecurityGroupEgress",
-                    "ec2:AuthorizeSecurityGroupEgress",
-                    "events:PutRule",
-                    "kms:GenerateDataKey",
-                    "kms:CreateAlias",
-                    "kms:DescribeKey",
-                    "kms:DeleteAlias",
-                    "kms:GenerateDataKeyPair"
-                ],
-                "Resource": [
-                    "arn:aws:ec2:*:${var.account_id}:security-group/*",
-                    "arn:aws:ec2:*:${var.account_id}:vpc/*",
-                    "arn:aws:events:*:${var.account_id}:rule/*",
-                    "arn:aws:kms:*:${var.account_id}:key/*",
-                    "arn:aws:kms:*:${var.account_id}:alias/*"
-                ]
-            },
-            {
-                "Sid": "VisualEditor1",
-                "Effect": "Allow",
-                "Action": [
-                    "iam:GetRole",
-                    "iam:CreateGroup",
-                    "iam:ListAttachedRolePolicies",
-                    "iam:CreateRole",
-                    "iam:PutRolePolicy",
-                    "iam:ListRolePolicies",
-                    "iam:GetRolePolicy",
-                    "iam:GetInstanceProfile",
-                    "iam:CreateInstanceProfile",
-                    "iam:RemoveRoleFromInstanceProfile",
-                    "iam:DeleteInstanceProfile",
-                    "iam:AddRoleToInstanceProfile",
-                    "iam:PassRole"
-                ],
-                "Resource": [
-                    "arn:aws:iam::${var.account_id}:group/*",
-                    "arn:aws:iam::${var.account_id}:role/*",
-                    "arn:aws:iam::${var.account_id}:instance-profile/${var.ec2_iam_role_name}"
-                ]
-            },
-            {
-                "Sid": "VisualEditor2",
-                "Effect": "Allow",
-                "Action": [
-                    "kms:ListKeys",
-                    "kms:ListAliases",
-                    "kms:CreateKey"
-                ],
-                "Resource": "*"
-            }
-        ]
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "VisualEditor0",
+          "Effect" : "Allow",
+          "Action" : [
+            "events:DescribeRule",
+            "kms:Decrypt",
+            "kms:TagResource",
+            "kms:Encrypt",
+            "ec2:CreateSecurityGroup",
+            "ec2:CreateTags",
+            "ec2:RevokeSecurityGroupEgress",
+            "ec2:AuthorizeSecurityGroupEgress",
+            "events:PutRule",
+            "kms:GenerateDataKey",
+            "kms:CreateAlias",
+            "kms:DescribeKey",
+            "kms:DeleteAlias",
+            "kms:GenerateDataKeyPair"
+          ],
+          "Resource" : [
+            "arn:aws:ec2:*:${var.account_id}:security-group/*",
+            "arn:aws:ec2:*:${var.account_id}:vpc/*",
+            "arn:aws:events:*:${var.account_id}:rule/*",
+            "arn:aws:kms:*:${var.account_id}:key/*",
+            "arn:aws:kms:*:${var.account_id}:alias/*"
+          ]
+        },
+        {
+          "Sid" : "VisualEditor1",
+          "Effect" : "Allow",
+          "Action" : [
+            "iam:GetRole",
+            "iam:CreateGroup",
+            "iam:ListAttachedRolePolicies",
+            "iam:CreateRole",
+            "iam:PutRolePolicy",
+            "iam:ListRolePolicies",
+            "iam:GetRolePolicy",
+            "iam:GetInstanceProfile",
+            "iam:CreateInstanceProfile",
+            "iam:RemoveRoleFromInstanceProfile",
+            "iam:DeleteInstanceProfile",
+            "iam:AddRoleToInstanceProfile",
+            "iam:PassRole"
+          ],
+          "Resource" : [
+            "arn:aws:iam::${var.account_id}:group/*",
+            "arn:aws:iam::${var.account_id}:role/*",
+            "arn:aws:iam::${var.account_id}:instance-profile/${var.ec2_iam_role_name}"
+          ]
+        },
+        {
+          "Sid" : "VisualEditor2",
+          "Effect" : "Allow",
+          "Action" : [
+            "kms:ListKeys",
+            "kms:ListAliases",
+            "kms:CreateKey"
+          ],
+          "Resource" : "*"
+        }
+      ]
     })
   }
 }

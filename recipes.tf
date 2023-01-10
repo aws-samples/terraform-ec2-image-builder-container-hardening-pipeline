@@ -4,11 +4,11 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
     aws_ecr_repository.hardening_pipeline_repo
   ]
 
-  name    = "${var.image_name}"
+  name    = var.image_name
   version = "1.0.0"
 
-  container_type = "DOCKER"
-  parent_image = "amazonlinux:latest"
+  container_type    = "DOCKER"
+  parent_image      = "amazonlinux:latest"
   working_directory = "/etc"
 
   target_repository {

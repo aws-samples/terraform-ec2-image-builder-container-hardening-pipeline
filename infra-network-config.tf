@@ -3,7 +3,7 @@
 # VPC Endpoints cannot be used
 # This solution can be modified to utilize only VPC Endpoints when the bootstrap process is updated
 resource "aws_vpc" "hardening_pipeline" {
-  cidr_block = "192.168.0.0/16"
+  cidr_block           = "192.168.0.0/16"
   enable_dns_hostnames = true
   tags = {
     Name = "${var.vpc_name}"
@@ -14,10 +14,10 @@ resource "aws_flow_log" "hardening_pipeline_flow" {
   depends_on = [
     aws_s3_bucket.s3_pipeline_logging_bucket_logs
   ]
-  log_destination = aws_s3_bucket.s3_pipeline_logging_bucket_logs.arn
+  log_destination      = aws_s3_bucket.s3_pipeline_logging_bucket_logs.arn
   log_destination_type = "s3"
-  traffic_type    = "ALL"
-  vpc_id          = aws_vpc.hardening_pipeline.id
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.hardening_pipeline.id
 }
 
 # Map public IP on launch because we are creating an internet gateway
@@ -25,10 +25,10 @@ resource "aws_subnet" "hardening_pipeline_public" {
   depends_on = [
     aws_vpc.hardening_pipeline
   ]
-  
-  vpc_id = aws_vpc.hardening_pipeline.id
-  cidr_block = "192.168.0.0/24"
-  availability_zone = "${var.aws_region}a"
+
+  vpc_id                  = aws_vpc.hardening_pipeline.id
+  cidr_block              = "192.168.0.0/24"
+  availability_zone       = "${var.aws_region}a"
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.vpc_name}-public"
@@ -40,11 +40,11 @@ resource "aws_subnet" "hardening_pipeline_private" {
     aws_vpc.hardening_pipeline,
     aws_subnet.hardening_pipeline_public
   ]
-  
-  vpc_id = aws_vpc.hardening_pipeline.id
-  cidr_block = "192.168.1.0/24" 
+
+  vpc_id            = aws_vpc.hardening_pipeline.id
+  cidr_block        = "192.168.1.0/24"
   availability_zone = "${var.aws_region}a"
-  
+
   tags = {
     Name = "${var.vpc_name}-private"
   }
@@ -60,7 +60,7 @@ resource "aws_internet_gateway" "hardening_pipeline_igw" {
     aws_subnet.hardening_pipeline_public,
     aws_subnet.hardening_pipeline_private
   ]
-  
+
   vpc_id = aws_vpc.hardening_pipeline.id
   tags = {
     Name = "${var.vpc_name}-igw"
@@ -101,7 +101,7 @@ resource "aws_nat_gateway" "hardening_pipeline_nat_gateway" {
     aws_eip.nat_gateway_eip
   ]
   allocation_id = aws_eip.nat_gateway_eip.id
-  subnet_id = aws_subnet.hardening_pipeline_public.id
+  subnet_id     = aws_subnet.hardening_pipeline_public.id
   tags = {
     Name = "${var.vpc_name}-nat-gateway"
   }
@@ -112,7 +112,7 @@ resource "aws_route_table" "hardening_pipeline_nat_gateway_rt" {
   ]
   vpc_id = aws_vpc.hardening_pipeline.id
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.hardening_pipeline_nat_gateway.id
   }
   tags = {

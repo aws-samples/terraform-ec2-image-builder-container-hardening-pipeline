@@ -4,7 +4,7 @@ resource "aws_ecr_repository" "hardening_pipeline_repo" {
 
   encryption_configuration {
     encryption_type = "KMS"
-    kms_key = aws_kms_key.this.arn
+    kms_key         = aws_kms_key.this.arn
   }
 
   image_scanning_configuration {

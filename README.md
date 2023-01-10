@@ -22,7 +22,7 @@ The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/Amaz
 * A Container Image
 * A [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
 * An SQS Queue
-* Three roles, one for the EC2 Image Builder Pipeline to execute as, one instance profile for EC2 Image Builder, and one for EventBridge Rules
+* Four roles, one for the EC2 Image Builder Pipeline to execute as, one instance profile for EC2 Image Builder, and one for EventBridge Rules, and one for VPC Flow Log collection.
 * Two Cloudwatch Event Rules,  one which triggers the start of the pipeline based on an Inspector Finding of “High” or “Critical”, and one which sends notifications to an SQS Queue for a successful Image push to the ECR Repository
 * This pattern creates 42 AWS Resources total
 

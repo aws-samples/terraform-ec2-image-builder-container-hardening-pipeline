@@ -5,22 +5,27 @@
 resource "aws_s3_bucket" "s3_pipeline_logging_bucket_logs" {
   bucket        = "${var.aws_s3_ami_resources_bucket}-logs"
   force_destroy = true
-  versioning {
-    enabled = true
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
 
   tags = {
     Name = "${var.aws_s3_ami_resources_bucket}"
   }
 }
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_pipeline_logging_bucket_enc" {
+  bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
+  rule {
+    apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "s3_pipeline_logging_bucket_version" { 
+  bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+} 
 
 resource "aws_s3_bucket_acl" "s3_pipeline_bucket_logs_acl" {
   bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
@@ -43,25 +48,24 @@ resource "aws_s3_bucket" "s3_pipeline_bucket" {
   ]
   bucket        = var.aws_s3_ami_resources_bucket
   force_destroy = true
-  versioning {
-    enabled = true
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  logging {
-    target_bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
-    target_prefix = "AccessLogs/"
-  }
 
   tags = {
     Name = "${var.aws_s3_ami_resources_bucket}"
+  }
+}
+
+resource "aws_s3_bucket_logging" "s3_pipeline_bucket_log_cfg" {
+  bucket = aws_s3_bucket.s3_pipeline_bucket.id
+  target_bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
+  target_prefix = "AccessLogs/"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_pipeline_bucket_enc" {
+  bucket = aws_s3_bucket.s3_pipeline_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+    }
   }
 }
 
@@ -107,6 +111,13 @@ data "aws_iam_policy_document" "allow_access_from_pipeline_service_role" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "s3_pipeline_bucket_version" {
+  bucket = aws_s3_bucket.s3_pipeline_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+} 
+
 resource "aws_imagebuilder_image_pipeline" "this" {
   container_recipe_arn             = aws_imagebuilder_container_recipe.container_image.arn
   infrastructure_configuration_arn = aws_imagebuilder_infrastructure_configuration.this.arn
@@ -116,12 +127,11 @@ resource "aws_imagebuilder_image_pipeline" "this" {
   distribution_configuration_arn   = aws_imagebuilder_distribution_configuration.this.arn
 
   schedule {
+    # This cron schedule is for every Friday at 6 AM, modify it for your purposes.
     schedule_expression = "cron(0 6 ? * fri)"
-    # This cron expressions states every Friday at 6 AM.
     pipeline_execution_start_condition = "EXPRESSION_MATCH_AND_DEPENDENCY_UPDATES_AVAILABLE"
   }
 
-  # Test the image after build
   image_tests_configuration {
     image_tests_enabled = true
   }

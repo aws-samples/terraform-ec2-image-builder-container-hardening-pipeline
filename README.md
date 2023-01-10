@@ -61,16 +61,16 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 ## Module details
 
-1. `hardening-pipeline.tfvars` contains the Terraform variables to be used at apply time
-2. `pipeline.tf` creates and manages an EC2 Image Builder pipeline in Terraform
+1. `hardening-pipeline.tfvars` contains the Terraform variables to be used at apply time.
+2. `pipeline.tf` creates and manages an EC2 Image Builder pipeline in Terraform.
 3. `image.tf` contains the definitions for the Base Image OS, this is where you can modify for a different base image pipeline.
 4. `infr-config.tf` and `dist-config.tf`  contain the resources for the minimum AWS infrastructure needed to spin up and distribute the image.
 5. `components.tf` contains an S3 upload resource to upload the contents of the /files directory, and where you can modularly add custom component YAML files as well.
 6. `recipes.tf` is where you can specific different mixtures of components to create a different container recipe.
-7. `trigger-build.tf` is an inspector2 finding based pipeline trigger.
-8. `roles.tf` contains the IAM policy definitions for the EC2 Instance Profile and Pipeline Deployment Role
-9. `infra-network-config.tf` contains the minimum VPC infrastructure to deploy the container image into
-10. `/files` is intended to contain the `.yml` files which are used to define any custom components used in components.tf
+7. `trigger-build.tf` contains the EventBridge rules and SQS queue resources.
+8. `roles.tf` contains the IAM policy definitions for the EC2 Instance Profile and Pipeline deployment role.
+9. `infra-network-config.tf` contains the minimum VPC infrastructure to deploy the container image into.
+10. `/files` is intended to contain the `.yml` files which are used to define any custom components used in components.tf.
 
 ## Target architecture
 ![Deployed Resources Architecture](container-harden.png)

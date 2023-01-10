@@ -2,7 +2,7 @@
 
 Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the “[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)” section in Linux STIG Components for details. This is commonly referred to as a “Golden” container image.
 
-The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html) which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of “High” or “Critical” so that insecure images are replaced, if Inspector and Amazon ECR enhanced scanning are enabled, however it is not necessary to deploy and utilize the solution.
+The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of “High” or “Critical” so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications of a successful Image push to the ECR Repository to better enable consumption of new container images.
 
 ## Prerequisites
 
@@ -15,14 +15,16 @@ The build includes a [Cloudwatch Event Rule](https://docs.aws.amazon.com/AmazonC
 
 ## Target technology stack  
 
-* Two [S3 Buckets](https://aws.amazon.com/s3/), 1 for the Pipeline Component Files and 1 for Server Access and VPC Flow logs
-* An [ECR Repository](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html)
-* A VPC, a Public and Private subnet, Route tables, a NAT Gateway, and an Internet Gateway
+* Two [S3 Buckets](https://aws.amazon.com/s3/), 1 for the Pipeline [Component](https://docs.aws.amazon.com/imagebuilder/latest/userguide/create-component-console.html) Files and 1 for Server Access and VPC Flow logs
+* An ECR [Repository](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Repositories.html)
+* A [VPC](https://aws.amazon.com/vpc/), a Public and Private [subnet](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html), [Route tables](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html), a [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html), and an [Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html)
 * An EC2 Image Builder Pipeline, Recipe, and Components
 * A Container Image
 * A [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
-* A Cloudwatch Event Rule which triggers the start of the pipeline based on an Inspector Finding of “High” or "Critical"
-* This pattern creates 34 AWS Resources total
+* An SQS Queue
+* Three roles, one for the EC2 Image Builder Pipeline to execute as, one instance profile for EC2 Image Builder, and one for EventBridge Rules
+* Two Cloudwatch Event Rules,  one which triggers the start of the pipeline based on an Inspector Finding of “High” or “Critical”, and one which sends notifications to an SQS Queue for a successful Image push to the ECR Repository
+* This pattern creates 42 AWS Resources total
 
 ## Limitations 
 
@@ -109,18 +111,24 @@ If you instead got command not found then install the AWS CLI
  Default region name: [us-east-1]: <Your desired region for deployment>
  Default output format [None]: <Your desired Output format>
 ```
-3. Clone the repository
+3. Clone the repository with HTTPS or SSH
+
+HTTPS
 ``` shell
 git clone https://github.com/aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git
+```
+SSH
+``` shell
+git clone git@github.com:aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git
 ```
 4. Navigate to the directory containing this solution before running the commands below:
 ``` shell
 cd terraform-ec2-image-builder-container-hardening-pipeline
 ```
 
-5. Update variables in hardening-pipeline.tfvars to match your environment and your desired configuration. You cannot use provided variable values, the solution will not deploy.
+5. Update variables in hardening-pipeline.tfvars to match your environment and your desired configuration. You must provide your own `account_id`, however, you should modify the rest of the variables to fit your desired deployment.
 ``` json
-account_id     = "012345678900"
+account_id     = "<DEPLOYMENT-ACCOUNT-ID>"
 aws_region     = "us-east-1"
 vpc_name       = "example-hardening-pipeline-vpc"
 kms_key_alias = "image-builder-container-key"
@@ -140,7 +148,7 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
-Apply complete! Resources: 34 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 42 added, 0 changed, 0 destroyed.
 ```
 
 ## Troubleshooting

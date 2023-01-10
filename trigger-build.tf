@@ -1,5 +1,14 @@
+resource "aws_sqs_queue" "container_build_queue" {
+  name                      = "hardened-container-build-queue"
+  sqs_managed_sse_enabled   = true
+  delay_seconds             = 90
+  max_message_size          = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 10
+}
+
 resource "aws_iam_role" "trigger_role" {
-  name               = "${var.ec2_iam_role_name}-event-bridge-role"
+  name               = "${var.ec2_iam_role_name}-eb-trigger-role"
   assume_role_policy = <<DOC
 {
   "Version": "2012-10-17",
@@ -10,7 +19,7 @@ resource "aws_iam_role" "trigger_role" {
       "Principal": {
         "Service": "events.amazonaws.com"
       },
-      "Action": "sts:AssumeRole"
+      "Action": ["sts:AssumeRole", "sqs:SendMessage"]
     }
   ]
 }
@@ -36,5 +45,29 @@ resource "aws_cloudwatch_event_target" "container_pipeline" {
   rule      = aws_cloudwatch_event_rule.inspector_finding.name
   target_id = "StartContainerBuild"
   arn       = aws_imagebuilder_image_pipeline.this.arn
+  role_arn  = aws_iam_role.trigger_role.arn
+}
+
+resource "aws_cloudwatch_event_rule" "new_image_push" {
+  name        = "new-hardened-container-build-push"
+  description = "New hardened container image successful push event rule."
+
+  event_pattern = <<EOF
+{
+  "source": ["aws.ecr"],
+  "detail-type": ["ECR Image Action"],
+  "detail": {
+    "action-type": ["PUSH"],
+    "result": ["SUCCESS"],
+    "repository-name": ["${var.ecr_name}"]
+  }
+}
+EOF
+}
+
+resource "aws_cloudwatch_event_target" "sqs_queue" {
+  rule      = aws_cloudwatch_event_rule.new_image_push.name
+  target_id = "NewContainerBuild"
+  arn       = aws_sqs_queue.container_build_queue.arn
   role_arn  = aws_iam_role.trigger_role.arn
 }

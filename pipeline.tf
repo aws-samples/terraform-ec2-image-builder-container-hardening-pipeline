@@ -3,22 +3,22 @@
 # In a Landing Zone or Control Tower environment, point to your Log Archive account buckets. 
 # This S3 bucket does not have access logging enabled to avoid recursive logging
 resource "aws_s3_bucket" "s3_pipeline_logging_bucket_logs" {
-  bucket = "${var.aws_s3_ami_resources_bucket}-logs"
+  bucket        = "${var.aws_s3_ami_resources_bucket}-logs"
   force_destroy = true
   versioning {
-    enabled    = true
+    enabled = true
   }
 
   server_side_encryption_configuration {
-   rule {
-       apply_server_side_encryption_by_default {
-       sse_algorithm = "AES256"
-       }
-   }
-  } 
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 
-   tags = {
-    Name        = "${var.aws_s3_ami_resources_bucket}"
+  tags = {
+    Name = "${var.aws_s3_ami_resources_bucket}"
   }
 }
 
@@ -41,27 +41,27 @@ resource "aws_s3_bucket" "s3_pipeline_bucket" {
   depends_on = [
     aws_s3_bucket.s3_pipeline_logging_bucket_logs
   ]
-  bucket = "${var.aws_s3_ami_resources_bucket}"
+  bucket        = var.aws_s3_ami_resources_bucket
   force_destroy = true
   versioning {
-    enabled    = true
+    enabled = true
   }
 
   server_side_encryption_configuration {
-   rule {
-       apply_server_side_encryption_by_default {
-       sse_algorithm = "AES256"
-       }
-   }
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
   }
 
   logging {
-      target_bucket =  aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
-      target_prefix = "AccessLogs/"
+    target_bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
+    target_prefix = "AccessLogs/"
   }
 
-   tags = {
-    Name        = "${var.aws_s3_ami_resources_bucket}"
+  tags = {
+    Name = "${var.aws_s3_ami_resources_bucket}"
   }
 }
 
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "allow_access_from_pipeline_service_role" {
 }
 
 resource "aws_imagebuilder_image_pipeline" "this" {
-  container_recipe_arn                 = aws_imagebuilder_container_recipe.container_image.arn
+  container_recipe_arn             = aws_imagebuilder_container_recipe.container_image.arn
   infrastructure_configuration_arn = aws_imagebuilder_infrastructure_configuration.this.arn
   name                             = var.image_name
   status                           = "ENABLED"

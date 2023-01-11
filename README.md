@@ -1,8 +1,8 @@
 # Terraform EC2 Image Builder Container Hardening Pipeline summary
 
-Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the “[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)” section in Linux STIG Components for details. This is commonly referred to as a “Golden” container image.
+Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the "[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)" section in Linux STIG Components for details. This is commonly referred to as a "Golden" container image.
 
-The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of “High” or “Critical” so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications of a successful Image push to the ECR Repository to better enable consumption of new container images.
+The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of "High" or "Critical" so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications of a successful Image push to the ECR Repository to better enable consumption of new container images.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/Amaz
 * [An AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) to deploy the infrastructure within.
 * [Git](https://git-scm.com/) (if provisioning from a local machine).
 * A [role](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjllPaT-LD8AhXsFFkFHd4PBEsQFnoECA8QAQ&url=https%3A%2F%2Fdocs.aws.amazon.com%2FIAM%2Flatest%2FUserGuide%2Fid_roles.html&usg=AOvVaw2x3qPB3Ld00_O0zMSxCNNi) within the AWS account that you are able create AWS resources with
-* Ensure the [.tfvars](https://developer.hashicorp.com/terraform/tutorials/configuration-language/variables) file has all variables defined or define all variables at “Terraform Apply” time
+* Ensure the [.tfvars](https://developer.hashicorp.com/terraform/tutorials/configuration-language/variables) file has all variables defined or define all variables at "Terraform Apply" time
 
 ## Target technology stack  
 
@@ -23,8 +23,8 @@ The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/Amaz
 * A [KMS Key](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiC5J339rD8AhV-F1kFHSp_CCEQFnoECA8QAQ&url=https%3A%2F%2Faws.amazon.com%2Fkms%2F&usg=AOvVaw3RCXPeRLWlWbJyXWU3HNGF) for Image Encryption
 * An SQS Queue
 * Four roles, one for the EC2 Image Builder Pipeline to execute as, one instance profile for EC2 Image Builder, and one for EventBridge Rules, and one for VPC Flow Log collection.
-* Two Cloudwatch Event Rules,  one which triggers the start of the pipeline based on an Inspector Finding of “High” or “Critical”, and one which sends notifications to an SQS Queue for a successful Image push to the ECR Repository
-* This pattern creates 42 AWS Resources total
+* Two Cloudwatch Event Rules,  one which triggers the start of the pipeline based on an Inspector Finding of "High" or "Critical," and one which sends notifications to an SQS Queue for a successful Image push to the ECR Repository
+* This pattern creates 44 AWS Resources total
 
 ## Limitations 
 
@@ -79,9 +79,9 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 * This terraform module set is intended to be used at scale. Instead of deploying it locally, the Terraform modules can be used in a multi-account strategy environment, such as in an [AWS Control Tower](https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html) with [Account Factory for Terraform](https://aws.amazon.com/blogs/aws/new-aws-control-tower-account-factory-for-terraform/) environment. In that case, a [backend state S3 bucket](https://developer.hashicorp.com/terraform/language/settings/backends/s3) should be used for managing Terraform state files, instead of managing the configuration state locally.
 
-* To deploy for scaled use, deploy the solution to one central account, such as “Shared Services/Common Services” from a Control Tower or Landing Zone account model and grant consumer accounts permission to access to the ECR Repo/KMS Key, see [this blog post](https://aws.amazon.com/premiumsupport/knowledge-center/secondary-account-access-ecr/) explaining the setup. For example, in an [Account Vending Machine](https://www.hashicorp.com/resources/terraform-landing-zones-for-self-service-multi-aws-at-eventbrite) or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
+* To deploy for scaled use, deploy the solution to one central account, such as "Shared Services/Common Services" from a Control Tower or Landing Zone account model and grant consumer accounts permission to access to the ECR Repo/KMS Key, see [this blog post](https://aws.amazon.com/premiumsupport/knowledge-center/secondary-account-access-ecr/) explaining the setup. For example, in an [Account Vending Machine](https://www.hashicorp.com/resources/terraform-landing-zones-for-self-service-multi-aws-at-eventbrite) or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
 
-* This container image pipeline can be simply modified once deployed, using EC2 Image Builder features, such as the “Component” feature, which will allow easy packaging of more components into the Docker build.
+* This container image pipeline can be simply modified once deployed, using EC2 Image Builder features, such as the "Component" feature, which will allow easy packaging of more components into the Docker build.
 
 * The KMS Key used to encrypt the container image should be shared across accounts which the container image is intended to be used in
 
@@ -148,7 +148,7 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
-Apply complete! Resources: 42 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 44 added, 0 changed, 0 destroyed.
 ```
 
 ## Troubleshooting
@@ -161,7 +161,7 @@ Error: configuring Terraform AWS Provider: error validating provider credentials
 
 This error is due to the expiration of the security token for the credentials used in your local machine’s configuration.
 
-See “[Set and View Configuration Settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods)” from the AWS Command Line Interface Documentation to resolve.
+See "[Set and View Configuration Settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods)" from the AWS Command Line Interface Documentation to resolve.
 
 ## Author
 

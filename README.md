@@ -56,6 +56,7 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 ├── main.tf
 ├── outputs.tf
 ├── sec-groups.tf
+├── trigger-build.tf
 └── variables.tf
 ```
 

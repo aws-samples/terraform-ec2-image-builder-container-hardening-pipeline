@@ -24,7 +24,7 @@ The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/Amaz
 * An SQS Queue
 * Four roles, one for the EC2 Image Builder Pipeline to execute as, one instance profile for EC2 Image Builder, and one for EventBridge Rules, and one for VPC Flow Log collection.
 * Two Cloudwatch Event Rules,  one which triggers the start of the pipeline based on an Inspector Finding of "High" or "Critical," and one which sends notifications to an SQS Queue for a successful Image push to the ECR Repository
-* This pattern creates 44 AWS Resources total
+* This pattern creates 43 AWS Resources total
 
 ## Limitations 
 
@@ -148,7 +148,7 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
-Apply complete! Resources: 44 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 43 added, 0 changed, 0 destroyed.
 ```
 
 ## Troubleshooting

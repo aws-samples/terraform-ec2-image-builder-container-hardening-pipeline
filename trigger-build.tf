@@ -28,12 +28,11 @@ resource "aws_cloudwatch_event_target" "sqs_queue" {
   rule      = aws_cloudwatch_event_rule.new_image_push.name
   target_id = "NewContainerBuild"
   arn       = aws_sqs_queue.container_build_queue.arn
-  role_arn  = aws_iam_role.trigger_role.arn
 }
 
 data "aws_iam_policy_document" "trigger_role_policy" {
     statement {
-    sid = "SQSRole"
+    sid = "STSRole"
     effect = "Allow"
     actions = ["sts:AssumeRole"]
     principals {
@@ -43,32 +42,34 @@ data "aws_iam_policy_document" "trigger_role_policy" {
   }
 }
 
-data "aws_iam_policy_document" "trigger_rb_policy" {
-    statement {
-    sid = "EventsToMyQueue"
-    effect = "Allow"
-    actions = ["sqs:SendMessage"]
-    principals {
-      type = "Service"
-      identifiers = ["events.amazonaws.com"]
+resource "aws_sqs_queue_policy" "sqs_policy" {
+  queue_url = aws_sqs_queue.container_build_queue.id
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Id": "sqsPolicy",
+  "Statement": [
+    {
+      "Sid": "First",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.container_build_queue.arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "arn:aws:events:${var.aws_region}:${var.account_id}:rule/${aws_cloudwatch_event_rule.new_image_push.name}"
+        }
+      }
     }
-    resources = ["arn:aws:sqs:${var.aws_region}:${var.account_id}:${aws_sqs_queue.container_build_queue.name}",]
-  }
+  ]
+}
+POLICY
 }
 
 resource "aws_iam_role" "trigger_role" {
   name               = "${var.ec2_iam_role_name}-eb-trigger-role"
   assume_role_policy = data.aws_iam_policy_document.trigger_role_policy.json
-}
-
-resource "aws_iam_policy" "trigger_role" {
-  name               = "${var.ec2_iam_role_name}-eb-trigger-policy"
-  policy = data.aws_iam_policy_document.trigger_rb_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "eb_trigger_attach" {
-  role       = "${aws_iam_role.trigger_role.name}"
-  policy_arn = aws_iam_policy.trigger_role.arn
 }
 
 resource "aws_cloudwatch_event_rule" "inspector_finding" {

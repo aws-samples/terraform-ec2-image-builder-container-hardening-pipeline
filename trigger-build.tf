@@ -31,41 +31,44 @@ resource "aws_cloudwatch_event_target" "sqs_queue" {
   role_arn  = aws_iam_role.trigger_role.arn
 }
 
+data "aws_iam_policy_document" "trigger_role_policy" {
+    statement {
+    sid = "SQSRole"
+    effect = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "trigger_role" {
   name               = "${var.ec2_iam_role_name}-eb-trigger-role"
-  assume_role_policy = <<DOC
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "events.amazonaws.com"
-      },
-      "Action": ["sts:AssumeRole"]
-    }
-  ]
+  assume_role_policy = data.aws_iam_policy_document.trigger_role_policy.json
 }
-DOC
-inline_policy {
-    name = "hardening_instance_inline_policy"
-    policy = jsonencode({
-      "Version": "2012-10-17",
-      "Statement": [
-      {
-          "Sid": "EventsToSQS",
+
+resource "aws_iam_policy" "trigger_role_policy" {
+  name               = "${var.ec2_iam_role_name}-eb-trigger-policy"
+  policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          "Sid": "EventsToMyQueue",
           "Effect": "Allow",
           "Principal": {
             "Service": "events.amazonaws.com"
           },
           "Action": "sqs:SendMessage",
-          "Resource": "arn:aws:sqs:${var.aws_region}:${var.account_id}:${aws_sqs_queue.container_build_queue.name}"
+          "Resource": "arn:aws:sqs:${var.aws_region}:${var.account_id}:${aws_sqs_queue.container_build_queue.name}",
           }
       ]
-    }
-    )
+    })
 }
+
+resource "aws_iam_role_policy_attachment" "eb_trigger_attach" {
+  role       = "${aws_iam_role.trigger_role.name}"
+  policy_arn = aws_iam_policy.trigger_role_policy.arn
 }
 
 resource "aws_cloudwatch_event_rule" "inspector_finding" {

@@ -15,7 +15,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_pipeline_loggi
   bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
   rule {
     apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -25,7 +25,7 @@ resource "aws_s3_bucket_versioning" "s3_pipeline_logging_bucket_version" {
   versioning_configuration {
     status = "Enabled"
   }
-} 
+}
 
 resource "aws_s3_bucket_acl" "s3_pipeline_bucket_logs_acl" {
   bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
@@ -55,7 +55,7 @@ resource "aws_s3_bucket" "s3_pipeline_bucket" {
 }
 
 resource "aws_s3_bucket_logging" "s3_pipeline_bucket_log_cfg" {
-  bucket = aws_s3_bucket.s3_pipeline_bucket.id
+  bucket        = aws_s3_bucket.s3_pipeline_bucket.id
   target_bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
   target_prefix = "AccessLogs/"
 }
@@ -64,7 +64,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_pipeline_bucke
   bucket = aws_s3_bucket.s3_pipeline_bucket.id
   rule {
     apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -116,7 +116,7 @@ resource "aws_s3_bucket_versioning" "s3_pipeline_bucket_version" {
   versioning_configuration {
     status = "Enabled"
   }
-} 
+}
 
 resource "aws_imagebuilder_image_pipeline" "this" {
   container_recipe_arn             = aws_imagebuilder_container_recipe.container_image.arn
@@ -128,7 +128,7 @@ resource "aws_imagebuilder_image_pipeline" "this" {
 
   schedule {
     # This cron schedule is for every Friday at 6 AM, modify it for your purposes.
-    schedule_expression = "cron(0 6 ? * fri)"
+    schedule_expression                = "cron(0 6 ? * fri)"
     pipeline_execution_start_condition = "EXPRESSION_MATCH_AND_DEPENDENCY_UPDATES_AVAILABLE"
   }
 

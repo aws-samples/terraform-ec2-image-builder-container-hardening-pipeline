@@ -95,7 +95,7 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 1. Setup your AWS temporary credentials.
 
 See if the AWS CLI is installed:
-``` shell
+``` bash
    $ aws --version
    aws-cli/1.16.249 Python/3.6.8...
 ```
@@ -105,7 +105,7 @@ AWS CLI version 1.1 or higher is fine
 If you instead got command not found then install the AWS CLI
 
 2. Run aws configure and provide the following values:
-``` shell
+``` bash
  $ aws configure
  AWS Access Key ID [*************xxxx]: <Your AWS Access Key ID>
  AWS Secret Access Key [**************xxxx]: <Your AWS Secret Access Key>
@@ -115,15 +115,15 @@ If you instead got command not found then install the AWS CLI
 3. Clone the repository with HTTPS or SSH
 
 HTTPS
-``` shell
+``` bash
 git clone https://github.com/aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git
 ```
 SSH
-``` shell
+``` bash
 git clone git@github.com:aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git
 ```
 4. Navigate to the directory containing this solution before running the commands below:
-``` shell
+``` bash
 cd terraform-ec2-image-builder-container-hardening-pipeline
 ```
 

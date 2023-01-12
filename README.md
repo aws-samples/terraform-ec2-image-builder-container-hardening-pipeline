@@ -128,7 +128,7 @@ cd terraform-ec2-image-builder-container-hardening-pipeline
 ```
 
 5. Update the placeholder variable values in hardening-pipeline.tfvars. You must provide your own `account_id`, `kms_key_alias`, and `aws_s3_ami_resources_bucket`, however, you should also modify the rest of the placeholder variables to match your environment and your desired configuration. 
-``` ini
+``` properties
 account_id     = "<DEPLOYMENT-ACCOUNT-ID>"
 aws_region     = "us-east-1"
 vpc_name       = "example-hardening-pipeline-vpc"
@@ -161,7 +161,7 @@ terraform init && terraform validate && terraform destroy -var-file *.tfvars -au
 
 When running Terraform apply or destroy commands from your local machine, you may encounter an error similar to the following:
 
-``` json
+``` properties
 Error: configuring Terraform AWS Provider: error validating provider credentials: error calling sts:GetCallerIdentity: operation error STS: GetCallerIdentity, https response error StatusCode: 403, RequestID: 123456a9-fbc1-40ed-b8d8-513d0133ba7f, api error InvalidClientTokenId: The security token included in the request is invalid.
 ```
 

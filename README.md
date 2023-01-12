@@ -127,7 +127,7 @@ git clone git@github.com:aws-samples/terraform-ec2-image-builder-container-harde
 cd terraform-ec2-image-builder-container-hardening-pipeline
 ```
 
-5. Update variables in hardening-pipeline.tfvars to match your environment and your desired configuration. You must provide your own `account_id`, however, you should modify the rest of the variables to fit your desired deployment.
+5. Update the placeholder variable values in hardening-pipeline.tfvars. You must provide your own `account_id`, `kms_key_alias`, and `aws_s3_ami_resources_bucket`, however, you should also modify the rest of the placeholder variables to match your environment and your desired configuration. 
 ``` json
 account_id     = "<DEPLOYMENT-ACCOUNT-ID>"
 aws_region     = "us-east-1"
@@ -150,6 +150,11 @@ terraform init && terraform validate && terraform apply -var-file *.tfvars -auto
 7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` shell
 Apply complete! Resources: 43 added, 0 changed, 0 destroyed.
+```
+
+8. *(Optional)* Teardown the infrastructure with the following command:
+``` shell
+terraform init && terraform validate && terraform destroy -var-file *.tfvars -auto-approve
 ```
 
 ## Troubleshooting

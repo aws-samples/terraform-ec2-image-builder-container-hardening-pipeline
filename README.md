@@ -118,7 +118,7 @@ If you instead got command not found then install the AWS CLI
 ``` bash
 git clone https://github.com/aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_SSH_
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_SSH_
 
 ``` bash
 git clone git@github.com:aws-samples/terraform-ec2-image-builder-container-hardening-pipeline.git

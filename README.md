@@ -103,7 +103,7 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AWS CLI version 1.1 or higher is fine.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you instead received `command not found` then install the AWS CLI
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you instead received `command not found` then install the AWS CLI.
 
 2. Run aws configure and provide the following values:
 ``` bash
@@ -149,7 +149,7 @@ ebs_root_vol_size = 10
 terraform init && terraform validate && terraform apply -var-file *.tfvars -auto-approve
 ```
 
-7. After successfully completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
+7. After successful completion of your first Terraform apply, if provisioning locally, you should see this snippet in your local machine’s terminal:
 ``` bash
 Apply complete! Resources: 43 added, 0 changed, 0 destroyed.
 ```

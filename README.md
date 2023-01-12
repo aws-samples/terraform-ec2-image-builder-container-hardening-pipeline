@@ -2,7 +2,7 @@
 
 Terraform modules build an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) with an [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) Baseline Container Recipe, which is used to deploy a [Docker](https://docs.docker.com/) based Amazon Linux 2 Container Image that has been hardened according to RHEL 7 STIG Version 3 Release 7 - Medium. See the "[STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig)" section in Linux STIG Components for details. This is commonly referred to as a "Golden" container image.
 
-The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of "High" or "Critical" so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications to an SQS Queue after a successful Container Image push to the ECR Repository, to better enable consumption of new container images.
+The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of "High" or "Critical" so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications to an [SQS Queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) after a successful Container Image push to the ECR Repository, to better enable consumption of new container images.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ The build includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/Amaz
 
 ## Limitations 
 
-[VPC Endpoints](https://docs.aws.amazon.com/whitepapers/latest/aws-privatelink/what-are-vpc-endpoints.html) cannot be used, and therefore this solution creates VPC Infrastructure that includes a [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) and an Internet Gateway for internet connectivity from its private subnet. This is due to the bootstrap process by [AWSTOE](https://docs.aws.amazon.com/imagebuilder/latest/userguide/how-image-builder-works.html#ibhow-component-management), which installs AWS CLI v2 from the internet.
+[VPC Endpoints](https://docs.aws.amazon.com/whitepapers/latest/aws-privatelink/what-are-vpc-endpoints.html) cannot be used, and therefore this solution creates VPC Infrastructure that includes a [NAT Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) and an Internet Gateway for internet connectivity from its private subnet. This is due to the bootstrap process by [AWSTOE](https://docs.aws.amazon.com/imagebuilder/latest/userguide/how-image-builder-works.html#ibhow-component-management).
 
 ## Operating systems
 
@@ -80,7 +80,7 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 * This terraform module set is intended to be used at scale. Instead of deploying it locally, the Terraform modules can be used in a multi-account strategy environment, such as in an [AWS Control Tower](https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html) with [Account Factory for Terraform](https://aws.amazon.com/blogs/aws/new-aws-control-tower-account-factory-for-terraform/) environment. In that case, a [backend state S3 bucket](https://developer.hashicorp.com/terraform/language/settings/backends/s3) should be used for managing Terraform state files, instead of managing the configuration state locally.
 
-* To deploy for scaled use, deploy the solution to one central account, such as "Shared Services/Common Services" from a Control Tower or Landing Zone account model and grant consumer accounts permission to access to the ECR Repo/KMS Key, see [this blog post](https://aws.amazon.com/premiumsupport/knowledge-center/secondary-account-access-ecr/) explaining the setup. For example, in an [Account Vending Machine](https://www.hashicorp.com/resources/terraform-landing-zones-for-self-service-multi-aws-at-eventbrite) or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
+* To deploy for scaled use, deploy the solution to one central account, such as "Shared Services/Common Services" from a Control Tower or Landing Zone account model and grant consumer accounts permission to access the ECR Repo/KMS Key, see [this blog post](https://aws.amazon.com/premiumsupport/knowledge-center/secondary-account-access-ecr/) explaining the setup. For example, in an [Account Vending Machine](https://www.hashicorp.com/resources/terraform-landing-zones-for-self-service-multi-aws-at-eventbrite) or Account Factory for Terraform, add permissions to each account baseline or account customization baseline to have access to that ECR Repo and Encryption key.
 
 * This container image pipeline can be simply modified once deployed, using EC2 Image Builder features, such as the "Component" feature, which will allow easy packaging of more components into the Docker build.
 
@@ -94,15 +94,16 @@ This Pipeline only contains a recipe for Amazon Linux 2.
 
 1. Setup your AWS temporary credentials.
 
-See if the AWS CLI is installed:
+   See if the AWS CLI is installed: 
+
 ``` bash
    $ aws --version
    aws-cli/1.16.249 Python/3.6.8...
 ```
 
-AWS CLI version 1.1 or higher is fine
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AWS CLI version 1.1 or higher is fine.
 
-If you instead got command not found then install the AWS CLI
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you instead received `command not found` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then install the AWS CLI
 
 2. Run aws configure and provide the following values:
 ``` bash

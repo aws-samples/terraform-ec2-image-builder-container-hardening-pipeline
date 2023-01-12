@@ -1,6 +1,5 @@
 # Enter values for all of the following if you wish to avoid being prompted on each run.
-# You must specify an account_id
-account_id                   = "537229986333"
+account_id                   = "012345678900"
 aws_region                   = "us-east-1"
 vpc_name                     = "example-hardening-pipeline-vpc"
 kms_key_alias                = "image-builder-container-key"

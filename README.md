@@ -2,6 +2,8 @@
 
 Creates and manages EC2 Image Builder Container resources. Specifically this pipeline builds an Amazon Linux 2 Baseline Container using Docker with RHEL 7 STIG Version 3 Release 7 hardening applied, along with a few other configurations. See recipes.tf for more details.
 
+Test.
+
 ## Prerequisites
 
 * Terraform v.15+. Download and setup Terraform. Refer to the official Terraform instructions to get started.

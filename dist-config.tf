@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "hardening_pipeline_repo" {
   name                 = var.ecr_name
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
 
   encryption_configuration {
     encryption_type = "KMS"

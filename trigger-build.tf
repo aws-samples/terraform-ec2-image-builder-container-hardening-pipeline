@@ -1,75 +1,20 @@
-resource "aws_sqs_queue" "container_build_queue" {
-  name                      = "hardened-container-build-queue"
-  sqs_managed_sse_enabled   = true
-  delay_seconds             = 90
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
-}
-
-resource "aws_cloudwatch_event_rule" "new_image_push" {
-  name        = "new-hardened-container-build-push"
-  description = "New hardened container image successful push event rule."
-
-  event_pattern = <<EOF
-{
-  "source": ["aws.ecr"],
-  "detail-type": ["ECR Image Action"],
-  "detail": {
-    "action-type": ["PUSH"],
-    "result": ["SUCCESS"],
-    "repository-name": ["${var.ecr_name}"]
-  }
-}
-EOF
-}
-
-resource "aws_cloudwatch_event_target" "sqs_queue" {
-  rule      = aws_cloudwatch_event_rule.new_image_push.name
-  target_id = "NewContainerBuild"
-  arn       = aws_sqs_queue.container_build_queue.arn
-}
-
-data "aws_iam_policy_document" "trigger_role_policy" {
-  statement {
-    sid     = "STSRole"
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com", ]
-    }
-  }
-}
-
-resource "aws_sqs_queue_policy" "sqs_policy" {
-  queue_url = aws_sqs_queue.container_build_queue.id
-
-  policy = <<POLICY
+resource "aws_iam_role" "trigger_role" {
+  name               = "${var.ec2_iam_role_name}-event-bridge-role"
+  assume_role_policy = <<DOC
 {
   "Version": "2012-10-17",
-  "Id": "sqsPolicy",
   "Statement": [
     {
-      "Sid": "First",
+      "Sid": "",
       "Effect": "Allow",
-      "Principal": "*",
-      "Action": "sqs:SendMessage",
-      "Resource": "${aws_sqs_queue.container_build_queue.arn}",
-      "Condition": {
-        "ArnEquals": {
-          "aws:SourceArn": "arn:aws:events:${var.aws_region}:${var.account_id}:rule/${aws_cloudwatch_event_rule.new_image_push.name}"
-        }
-      }
+      "Principal": {
+        "Service": "events.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
     }
   ]
 }
-POLICY
-}
-
-resource "aws_iam_role" "trigger_role" {
-  name               = "${var.ec2_iam_role_name}-eb-trigger-role"
-  assume_role_policy = data.aws_iam_policy_document.trigger_role_policy.json
+DOC
 }
 
 resource "aws_cloudwatch_event_rule" "inspector_finding" {

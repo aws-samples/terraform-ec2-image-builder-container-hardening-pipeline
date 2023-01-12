@@ -54,9 +54,7 @@ resource "aws_iam_role" "ec2_iam_role" {
           "Effect" : "Allow",
           "Action" : [
             "s3:List*",
-            "s3:GetObject",
-            "S3:GetBucketPolicy",
-            "S3:PutBucketPolicy"
+            "s3:GetObject"
           ],
           "Resource" : [
             "*"

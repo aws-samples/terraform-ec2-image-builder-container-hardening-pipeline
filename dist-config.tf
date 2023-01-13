@@ -15,6 +15,7 @@ resource "aws_ecr_repository" "hardening_pipeline_repo" {
 }
 
 resource "aws_imagebuilder_distribution_configuration" "this" {
+  # Modify this name if desired
   name = "local-distribution"
 
   distribution {
@@ -27,7 +28,7 @@ resource "aws_imagebuilder_distribution_configuration" "this" {
       name = "${var.image_name}-{{ imagebuilder:buildDate }}"
 
       launch_permission {
-        user_ids = [local.account_id]
+        user_ids = [var.account_id]
       }
 
       kms_key_id = aws_kms_key.this.arn

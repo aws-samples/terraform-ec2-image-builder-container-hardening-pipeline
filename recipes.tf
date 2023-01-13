@@ -40,6 +40,9 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
     component_arn = "arn:aws:imagebuilder:${var.aws_region}:aws:component/stig-build-linux-medium/x.x.x"
   }
 
+  # Add more component ARNs here to customize the recipe
+  # You can also add custom components if you defined any in components.tf
+
   dockerfile_template_data = <<EOF
 FROM {{{ imagebuilder:parentImage }}}
 {{{ imagebuilder:environments }}}

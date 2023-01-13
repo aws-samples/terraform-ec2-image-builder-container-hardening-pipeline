@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "this" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${local.account_id}:root"]
+      identifiers = ["arn:aws:iam::${var.account_id}:root"]
     }
   }
 
@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "this" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${local.account_id}:role/${local.kms_admin_role_name}"
+        "arn:aws:iam::${var.account_id}:role/${local.kms_admin_role_name}"
       ]
     }
   }
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "this" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${local.account_id}:role/${local.kms_admin_role_name}"
+        "arn:aws:iam::${var.account_id}:role/${local.kms_admin_role_name}"
       ]
     }
   }
@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "this" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${local.account_id}:role/${local.kms_admin_role_name}"
+        "arn:aws:iam::${var.account_id}:role/${local.kms_admin_role_name}"
       ]
     }
 
@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
-# Creates/manages KMS CMK
+# Creates and manages KMS CMK
 resource "aws_kms_key" "this" {
   description             = "EC2 Image Builder key"
   is_enabled              = true

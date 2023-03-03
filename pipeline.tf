@@ -98,6 +98,12 @@ data "aws_iam_policy_document" "allow_access_from_pipeline_service_role" {
       identifiers = ["arn:aws:iam::${var.account_id}:role/${var.hardening_pipeline_role_name}"]
     }
 
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["true"]
+    }
+
     actions = [
       "s3:PutObject",
       "s3:ListBucket",

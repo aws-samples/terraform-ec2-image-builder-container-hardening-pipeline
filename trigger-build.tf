@@ -59,6 +59,9 @@ resource "aws_sqs_queue_policy" "sqs_policy" {
       "Condition": {
         "ArnEquals": {
           "aws:SourceArn": "arn:aws:events:${var.aws_region}:${var.account_id}:rule/${aws_cloudwatch_event_rule.new_image_push.name}"
+        },
+        "Bool": {
+          "aws:SecureTransport": "true"
         }
       }
     }

@@ -1,5 +1,5 @@
 /* As this is intended to enable a Key Administrator in a multi-account structure
-the action and resource definition is broad */ 
+the action and resource definition is broad */
 data "aws_iam_policy_document" "this" {
   statement {
     sid       = "Enable IAM User Permissions"

@@ -15,7 +15,7 @@ resource "aws_s3_bucket_object" "component_files" {
 
 /* Add custom component resources below
  The YAML file referenced in the URI attribute must exist in the files/ directory
- Below is an example component. */ 
+ Below is an example component. */
 /* resource "aws_imagebuilder_component" "example_custom_component" {
   name       = "example-custom-component"
   platform   = "Linux"

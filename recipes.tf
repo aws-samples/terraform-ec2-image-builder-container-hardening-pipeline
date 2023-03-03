@@ -9,7 +9,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
 
   container_type    = "DOCKER"
   parent_image      = "amazonlinux:latest"
-  working_directory = "/etc"
+  working_directory = "/build"
 
   target_repository {
     repository_name = var.ecr_name
@@ -42,6 +42,9 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
 
   # Add more component ARNs here to customize the recipe
   # You can also add custom components if you defined any in components.tf
+  /* component {
+    component_arn = aws_imagebuilder_component.example_custom_component.arn
+  } */
 
   dockerfile_template_data = <<EOF
 FROM {{{ imagebuilder:parentImage }}}

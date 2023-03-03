@@ -4,6 +4,8 @@ This solution builds an [EC2 Image Builder Pipeline](https://docs.aws.amazon.com
 
 The solution includes two [Cloudwatch Event Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/Create-CloudWatch-Events-Rule.html). One which triggers the start of the Container Image pipeline based on an [Inspector Finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) of "High" or "Critical" so that insecure images are replaced, if Inspector and [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html) ["Enhanced Scanning"](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) are both enabled. The other Event Rule sends notifications to an [SQS Queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) after a successful Container Image push to the ECR Repository, to better enable consumption of new container images.
 
+In January 2023, [EC2 Image Builder added support for AWS Marketplace CIS Pre-Hardened images](https://aws.amazon.com/about-aws/whats-new/2023/01/ec2-image-builder-cis-benchmarks-security-hardening-amis/). This achieves a hardening goal, but is only for AMIs, not Container images, and you must sign-up for a [subscription](https://aws.amazon.com/marketplace/seller-profile?id=dfa1e6a8-0b7b-4d35-a59c-ce272caee4fc) in [AWS Marketplace](https://aws.amazon.com/marketplace) to CIS.
+
 ## Prerequisites
 
 * Terraform v.15+. [Download](https://www.terraform.io/downloads.html) and setup Terraform. Refer to the official Terraform [instructions](https://learn.hashicorp.com/collections/terraform/aws-get-started) to get started.

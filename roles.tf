@@ -216,8 +216,7 @@ resource "aws_iam_role" "hardening_pipeline_role" {
             "iam:CreateInstanceProfile",
             "iam:RemoveRoleFromInstanceProfile",
             "iam:DeleteInstanceProfile",
-            "iam:AddRoleToInstanceProfile",
-            "iam:PassRole"
+            "iam:AddRoleToInstanceProfile"
           ],
           "Resource" : [
             "arn:aws:iam::${var.account_id}:group/*",

@@ -186,4 +186,4 @@ See "[Set and View Configuration Settings](https://docs.aws.amazon.com/cli/lates
 
 ## Author
 
-* Mike Saintcross [msaintcr@amazon.com](mailto:msaintcr@amazon.com)
+* Mike Saintcross [@msntx](https://github.com/msntx)

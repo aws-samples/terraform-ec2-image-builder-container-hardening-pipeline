@@ -26,6 +26,10 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
   description = "Enter the AWS Region you wish to deploy in."
+  validation {
+    condition     = can(regex("(us(-gov)?|ap|ca|cn|eu|sa)-(central|(north|south)?(east|west)?)-\d", var.aws_region))
+    error_message = "Enter a valid region."
+  }
 }
 
 variable "vpc_name" {
@@ -51,6 +55,10 @@ variable "ecr_name" {
 variable "aws_s3_ami_resources_bucket" {
   type        = string
   description = "Enter the name for an S3 Bucket that will host all files necessary to build the pipeline and container images."
+  validation {
+    condition     = substr(var.aws_s3_ami_resources_bucket, 0, 1) != "/" && substr(var.aws_s3_ami_resources_bucket, -1, 1) != "/" && length(var.aws_s3_ami_resources_bucket) > 0
+    error_message = "Parameter `aws_s3_ami_resources_bucket` cannot start and end with \"/\", as well as cannot be empty."
+  }
 }
 
 variable "ebs_root_vol_size" {

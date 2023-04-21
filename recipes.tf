@@ -9,7 +9,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
 
   container_type    = "DOCKER"
   parent_image      = "amazonlinux:latest"
-  working_directory = "/build"
+  working_directory = "/tmp"
 
   target_repository {
     repository_name = var.ecr_name
@@ -19,12 +19,12 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
   instance_configuration {
 
     block_device_mapping {
-      device_name = "/dev/xvdb"
+      device_name = "/dev/xvda"
 
       ebs {
         delete_on_termination = true
         volume_size           = var.ebs_root_vol_size
-        volume_type           = "gp3"
+        volume_type           = "gp2"
         encrypted             = true
         kms_key_id            = aws_kms_key.this.arn
       }

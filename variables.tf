@@ -26,10 +26,6 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
   description = "Enter the AWS Region you wish to deploy in."
-  validation {
-    condition     = can(regex("(us(-gov)?|ap|ca|cn|eu|sa)-(central|(north|south)?(east|west)?)-\d", var.aws_region))
-    error_message = "Enter a valid region."
-  }
 }
 
 variable "vpc_name" {

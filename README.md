@@ -1,6 +1,6 @@
 # Terraform EC2 Image Builder Container Hardening Pipeline summary
 
-This pattern builds an [EC2 Image Builder pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) that produces a hardened [Amazon Linux 2](https://aws.amazon.com/amazon-linux-2/) base container image. Terraform is used as an infrastructure as code (IaC) tool to configure and provision the infrastructure that is used to create hardened container images. The recipe helps you deploy a [Docker](https://docs.docker.com/)-based Amazon Linux 2 container image that has been hardened according to Red Hat Enterprise Linux (RHEL) 7 STIG Version 3 Release 7 ‒ Medium. (See [STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig) in the _Linux STIG components_ section of the EC2 Image Builder documentation.) This is commonly referred to as a _golden_ container image.  
+This pattern builds an [EC2 Image Builder pipeline](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html) that produces a hardened [Amazon Linux 2023](https://aws.amazon.com/linux/amazon-linux-2023/) base container image. Terraform is used as an infrastructure as code (IaC) tool to configure and provision the infrastructure that is used to create hardened container images. The recipe helps you deploy a [Docker](https://docs.docker.com/)-based Amazon Linux 2023 container image that has been hardened according to Red Hat Enterprise Linux (RHEL) 7 STIG Version 3 Release 7 ‒ Medium. (See [STIG-Build-Linux-Medium version 2022.2.1](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-stig.html#linux-os-stig) in the _Linux STIG components_ section of the EC2 Image Builder documentation.) This is commonly referred to as a _golden_ container image.  
   
 The build includes two Amazon [EventBridge rules](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-rules.html). One rule starts the container image pipeline when the Amazon [Inspector finding](https://docs.aws.amazon.com/inspector/latest/user/findings-managing.html) is **High** or **Critical** so that non-secure images are replaced. (This rule requires both Amazon Inspector and Amazon Elastic Container Registry (Amazon ECR) [enhanced scanning](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning-enhanced.html) to be enabled.) The other rule sends notifications to an Amazon Simple Queue Service (Amazon SQS) [queue](https://aws.amazon.com/sqs/) after a successful image push to the Amazon ECR repository, to help you use the latest container images.
 
@@ -21,7 +21,7 @@ In January 2023, [EC2 Image Builder added support for AWS Marketplace CIS Pre-Ha
 
 ## Product versions
 
-- Amazon Linux 2
+- Amazon Linux 2023
 - AWS CLI version 1.1 or later
 
 ## Target technology stack
@@ -80,7 +80,7 @@ This pattern creates 43 resources, including:
 
 The diagram illustrates the following workflow:
 
-1. EC2 Image Builder builds a container image by using the defined recipe, which installs operating system updates and applies the RHEL Medium STIG to the Amazon Linux 2 base image.
+1. EC2 Image Builder builds a container image by using the defined recipe, which installs operating system updates and applies the RHEL Medium STIG to the Amazon Linux 2023 base image.
 2. The hardened image is published to a private Amazon ECR registry, and an EventBridge rule sends a message to an SQS queue when the image has been published successfully.
 3. If Amazon Inspector is configured for enhanced scanning, it scans the Amazon ECR registry.
 4. If Amazon Inspector generates a **Critical** or **High** severity finding for the image, an EventBridge rule triggers the EC2 Image Builder pipeline to run again and publish a newly hardened image.
@@ -92,7 +92,7 @@ The diagram illustrates the following workflow:
 - After the container image pipeline is deployed, you can modify it by using EC2 Image Builder features such as [components](https://docs.aws.amazon.com/imagebuilder/latest/userguide/manage-components.html), which help you package more components into the Docker build.
 - The AWS KMS key that is used to encrypt the container image should be shared across the accounts that the image is intended to be used in.
 - You can add support for other images by duplicating the entire Terraform module and modifying the following recipes.tf attributes:
-- Modify `parent_image = "amazonlinux:latest"` to another image type.
+- Modify `parent_image = "amazonlinux:2023"` to another image type.
 - Modify `repository_name` to point to an existing Amazon ECR repository. This creates another pipeline that deploys a different parent image type to your existing Amazon ECR repository.
 
 ## Tools
@@ -151,7 +151,7 @@ kms_key_alias                = "image-builder-container-key"
 ec2_iam_role_name            = "example-hardening-instance-role"
 hardening_pipeline_role_name = "example-hardening-pipeline-role"
 aws_s3_ami_resources_bucket  = "example-hardening-ami-resources-bucket-name"
-image_name                   = "example-hardening-al2-container-image"
+image_name                   = "example-hardening-al2023-container-image"
 ecr_name                     = "example-hardening-container-repo"
 recipe_version               = "1.0.0" 
 ebs_root_vol_size            = 10

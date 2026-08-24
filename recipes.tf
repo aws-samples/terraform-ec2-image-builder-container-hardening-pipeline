@@ -5,7 +5,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
   ]
 
   name    = var.image_name
-  version = "1.0.0"
+  version = var.recipe_version
 
   container_type    = "DOCKER"
   parent_image      = "amazonlinux:2023"
@@ -37,7 +37,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
   }
 
   component {
-    component_arn = "arn:aws:imagebuilder:${var.aws_region}:aws:component/stig-build-linux-medium/x.x.x"
+    component_arn = "arn:aws:imagebuilder:${var.aws_region}:aws:component/stig-build-linux/x.x.x"
   }
 
   # Add more component ARNs here to customize the recipe

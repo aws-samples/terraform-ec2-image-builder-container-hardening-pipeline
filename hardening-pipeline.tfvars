@@ -9,4 +9,4 @@ aws_s3_ami_resources_bucket  = "example-hardening-ami-resources-bucket-0123"
 image_name                   = "example-hardening-al2023-container-image"
 ecr_name                     = "example-hardening-container-repo"
 recipe_version               = "1.0.0"
-ebs_root_vol_size            = 10
+ebs_root_vol_size            = 30

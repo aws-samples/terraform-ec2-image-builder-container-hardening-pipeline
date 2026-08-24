@@ -1,5 +1,5 @@
 # Upload files to S3
-resource "aws_s3_bucket_object" "component_files" {
+resource "aws_s3_object" "component_files" {
   depends_on = [
     aws_s3_bucket.s3_pipeline_bucket,
     aws_kms_key.this
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_object" "component_files" {
   kms_key_id = aws_kms_key.this.arn
 
   depends_on = [
-    aws_s3_bucket_object.component_files,
+    aws_s3_object.component_files,
     aws_kms_key.this
   ]
 } */

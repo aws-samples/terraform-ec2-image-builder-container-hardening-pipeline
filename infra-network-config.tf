@@ -94,7 +94,7 @@ resource "aws_eip" "nat_gateway_eip" {
   depends_on = [
     aws_route_table_association.hardening_pipeline_rt_assoc
   ]
-  vpc = true
+  domain = "vpc"
 }
 resource "aws_nat_gateway" "hardening_pipeline_nat_gateway" {
   depends_on = [

@@ -27,11 +27,6 @@ resource "aws_s3_bucket_versioning" "s3_pipeline_logging_bucket_version" {
   }
 }
 
-resource "aws_s3_bucket_acl" "s3_pipeline_bucket_logs_acl" {
-  bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_public_access_block" "s3_pipeline_bucket_logs_block" {
   bucket = aws_s3_bucket.s3_pipeline_logging_bucket_logs.id
 
@@ -67,11 +62,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_pipeline_bucke
       sse_algorithm = "AES256"
     }
   }
-}
-
-resource "aws_s3_bucket_acl" "s3_pipeline_bucket_acl" {
-  bucket = aws_s3_bucket.s3_pipeline_bucket.id
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_policy" "allow_access_from_pipeline_service_role" {

@@ -8,7 +8,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
   version = "1.0.0"
 
   container_type    = "DOCKER"
-  parent_image      = "amazonlinux:latest"
+  parent_image      = "amazonlinux:2023"
   working_directory = "/tmp"
 
   target_repository {
@@ -24,7 +24,7 @@ resource "aws_imagebuilder_container_recipe" "container_image" {
       ebs {
         delete_on_termination = true
         volume_size           = var.ebs_root_vol_size
-        volume_type           = "gp2"
+        volume_type           = "gp3"
         encrypted             = true
         kms_key_id            = aws_kms_key.this.arn
       }
